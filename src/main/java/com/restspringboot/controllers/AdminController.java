@@ -1,41 +1,45 @@
 package com.restspringboot.controllers;
 
 import com.restspringboot.entities.User;
-import com.restspringboot.service.UserService;
+import com.restspringboot.service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
-    @RestController
+@RestController
     @RequestMapping("/admin")
     public class AdminController {
 
-        private final UserService userService;
+        private final UserServiceImpl userServiceImpl;
 
+        @Autowired
+        private PasswordEncoder passwordEncoder;
 
-        public AdminController(UserService userService) {
-            this.userService = userService;
+        public AdminController(UserServiceImpl userServiceImpl) {
+            this.userServiceImpl = userServiceImpl;
         }
 
         @GetMapping("users")
         public List<User> getAllUsers() {
-            return userService.getList();
+            return userServiceImpl.getList();
         }
 
         @PostMapping("/users")
         public void addNewUser(@RequestBody User user) {
-            userService.save(user);
+            user.setPassword(encoder(user.getPassword()));
+            userServiceImpl.save(user);
         }
 
         @PutMapping("/users/{id}")
         public ResponseEntity<?> updateUser(@RequestBody User user) {
             try {
-                userService.save(user);
+                user.setPassword(encoder(user.getPassword()));
+                userServiceImpl.save(user);
                 return new ResponseEntity<>(HttpStatus.OK);
             } catch (NoSuchElementException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -44,17 +48,25 @@ import java.util.Set;
 
         @DeleteMapping("/users/{id}")
         public void deleteUser(@PathVariable Long id) {
-            userService.remove(id);
+            userServiceImpl.remove(id);
         }
 
         @GetMapping("/users/{id}")
         public ResponseEntity<?> getUserInfo(@PathVariable Long id) {
             try {
-                User user = userService.getById(id);
+                User user = userServiceImpl.getById(id);
                 return new ResponseEntity<>(user, HttpStatus.OK);
             } catch (NoSuchElementException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+        }
+        private String encoder(String codeHash) {
+
+            if (codeHash.length() < 60)  {
+                codeHash = passwordEncoder.encode(codeHash);
+            }
+            return codeHash;
+
         }
     }
 

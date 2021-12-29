@@ -1,45 +1,17 @@
 package com.restspringboot.service;
 
-
 import com.restspringboot.entities.User;
-import com.restspringboot.repository.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class UserService implements UserDetailsService {
+public interface UserService {
 
-    private final UserRepository userRepository;
+   User loadUserByUsername (String username);
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    List<User> getList();
+    User save(User user);
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(username);
-        return user;
-    }
+    User getById(Long id);
 
-    public List<User> getList() {
-        return userRepository.findAll();
-    }
-
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    public User getById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.get();
-    }
-
-    public void remove(Long id) {
-        userRepository.delete(getById(id));
-    }
+    void remove(Long id);
 }

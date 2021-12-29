@@ -135,8 +135,8 @@
                                                         id="role"
                                                         size="2"
                                                         name="role">
-                                                    <option value="ROLE_ADMIN">ADMIN</option>
-                                                    <option value="ROLE_USER" selected>USER</option>
+                                                    <option th:each="role : ${roles}"
+                                                            th:text="${role.name}"></option>
                                                 </select>
                                             </div>
                                             <button type="submit" class="btn btn-success btn-lg">Add new user
@@ -240,10 +240,11 @@
                                id="editPassword" name="password">
                     </div>
                     <div class="form-group">
-                        <select class="form-select" multiple id="editRoles" size="2"
-                                name="role" style="width: 200px">
-                            <option value="ROLE_ADMIN">ADMIN</option>
-                            <option value="ROLE_USER" selected>USER</option>
+                        <select class="form-select" multiple id="editRoles"
+                                size="2"
+                                name="role" disabled style="width: 200px">
+                            <option th:each="role : ${roles}"
+                                    th:text="${role.name}"></option>
                         </select>
                     </div>
                 </div>
@@ -326,8 +327,8 @@
                     <select class="form-select" multiple id="deleteRoles"
                             size="2"
                             name="role" disabled style="width: 200px">
-                        <option value="ROLE_ADMIN">ADMIN</option>
-                        <option value="ROLE_USER">USER</option>
+                        <option th:each="role : ${roles}"
+                                th:text="${role.name}"></option>
                     </select>
 
                 </div>
